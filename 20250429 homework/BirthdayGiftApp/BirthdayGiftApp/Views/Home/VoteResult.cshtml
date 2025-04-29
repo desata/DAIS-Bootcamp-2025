@@ -1,0 +1,10 @@
+﻿@model VoteResultViewModel
+<h2>Vote Results</h2>
+<p>Gift: @Model.SelectedGift.Description</p>
+<p>Voters:</p>
+<ul>
+    @foreach (var selection in Model.VoteSelections)
+    {
+        <li>@selection.VoterEmployee.Name voted for @selection.Gift.Description</li>
+    }
+</ul>

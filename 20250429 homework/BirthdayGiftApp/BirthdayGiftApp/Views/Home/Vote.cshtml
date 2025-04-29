@@ -1,0 +1,7 @@
+﻿@model VoteViewModel
+<form method="post">
+    <label for="SelectedGiftId">Select Gift:</label>
+    <select asp-for="SelectedGiftId" asp-items="@(new SelectList(Model.GiftVoteOptions, "Id", "Description"))"></select>
+
+    <button type="submit">Vote</button>
+</form>

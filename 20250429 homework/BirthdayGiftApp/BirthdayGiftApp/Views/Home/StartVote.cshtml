@@ -1,0 +1,10 @@
+﻿@model StartVoteViewModel
+<form method="post">
+    <label for="BirthdayEmployeeId">Select Birthday Employee:</label>
+    <select asp-for="BirthdayEmployeeId" asp-items="@(new SelectList(Model.Employees, "Id", "Name"))"></select>
+
+    <label for="SelectedGifts">Select Gifts:</label>
+    <select asp-for="SelectedGifts" asp-items="@(new SelectList(Model.Gifts, "Id", "Description"))" multiple="multiple"></select>
+
+    <button type="submit">Start Vote</button>
+</form>
