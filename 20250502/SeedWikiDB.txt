@@ -1,0 +1,69 @@
+-- Seed data for Roles
+insert into Roles (Name)
+VALUES('Admin'),
+('Viewer'),
+('Contributor')
+
+-- Seed data for AccessLevels
+insert into AccessLevels (Name)
+VALUES
+('Private'),
+('Team Only'),
+('Public')
+
+-- Seed data for Users
+INSERT INTO Users (FullName, Picture, RoleId, AccessLevelId)
+VALUES 
+('John Doe', NULL, 1, 1),         
+('Jane Smith', NULL, 2, 2),       
+('Alice Johnson', NULL, 3, 3),    
+('Bob Lee', NULL, 2, 1),          
+('Maria Garcia', NULL, 1, 2);     
+
+-- Seed data for Categories
+INSERT INTO Cathegories (Name)
+VALUES 
+('Development'),
+('Design'),
+('Marketing'),
+('Project Management'),
+('Support'),
+('Quality Assurance');
+
+-- Seed data for Tags
+INSERT INTO Tags (Name, DocumentId)
+VALUES 
+(N'C#', 2),
+(N'UX', 3),
+(N'SEO', 1),
+(N'Scrum', 1),
+(N'Automation', 2);
+
+-- Seed data for Types
+INSERT INTO [Types] (Name)
+VALUES 
+('Text Document'),
+('Presentation'),
+('Video'),
+('Image'),
+('Code Snippet');
+
+-- Seed data for Documents
+INSERT INTO Documents (
+    Title, Content, UploadDate, UpdateTime, IsArhived,
+    CreatorId, TypeId, CategoryId, AccessLevelId
+)
+VALUES
+(N'Agile Methodology Guide', N'Comprehensive guide to Agile practices...', GETDATE(), NULL, 0, 1, 1, 4, 1),
+(N'Introduction to C#', N'This document covers basic to intermediate C# concepts...', GETDATE(), NULL, 0, 2, 1, 1, 2),
+(N'Design Principles Overview', N'A summary of key UX/UI design principles...', GETDATE(), NULL, 0, 3, 4, 2, 1);
+
+
+-- Seed data for Ratings
+INSERT INTO Ratings (Score, Comments, DocumentId)
+VALUES
+(5, 'Excellent overview', 1),
+(4, 'Well structured', 1),
+(3, 'Decent content', 2),
+(5, 'Great intro!', 2),
+(2, 'Too basic', 3);
