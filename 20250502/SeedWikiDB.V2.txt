@@ -1,0 +1,121 @@
+use WikiDB
+
+-- Seed data for Roles
+insert into Roles (Name)
+VALUES('Admin'),
+('Viewer'),
+('Editor'),
+('Contributor')
+
+-- Seed data for AccessLevels
+insert into AccessLevels (Name)
+VALUES
+('Private'),
+('Team Only'),
+('Public'),
+('All')
+
+-- Seed data for Categories
+INSERT INTO Categories (Name)
+VALUES 
+('Development'),
+('Design'),
+('Marketing'),
+('Project Management'),
+('Support'),
+('DBA'),
+('Quality Assurance');
+
+-- Seed data for Users
+INSERT INTO Users (FullName, Picture, TeamId, RoleId, AccessLevelId)
+VALUES 
+('John Doe', NULL, 1, 1, 1),         
+('Jane Smith', NULL, 1, 2, 2),       
+('Alice Johnson', NULL, 3, 3, 3),    
+('Bob Lee', NULL, 2, 2, 1),          
+('Maria Garcia', NULL, 1, 2, 1);     
+
+-- Seed data for Types
+INSERT INTO [Types] (Name)
+VALUES 
+('Text Document'),
+('Presentation'),
+('Video'),
+('Image'),
+('Code Snippet');
+
+-- Seed data for Theme
+INSERT INTO Theme (Name)
+VALUES 
+('Development'),
+('Design'),
+('Marketing'),
+('Project Management'),
+('Support'),
+('Quality Assurance');
+
+-- Seed data for Tags
+INSERT INTO Tags (Name)
+VALUES 
+(N'C#'),
+(N'UX'),
+(N'SEO'),
+(N'Scrum'),
+(N'Automation');
+
+
+-- Seed data for Documents
+INSERT INTO Documents (
+    Title, Content, UploadDate, UpdateTime, IsArhived,
+    ThemeId, CreatorId, TypeId, CategoryId, AccessLevelId
+)
+VALUES
+(N'Scrum Fundamentals', N'An overview of Scrum roles, events, and artifacts.', GETDATE(), NULL, 0, 1, 1, 1, 1, 1 ),
+(N'C# LINQ Basics',  N'This document introduces basic LINQ operations in C#.', GETDATE(), NULL, 0,  2, 2, 1, 1, 2 ),
+(N'UX Design Patterns', N'Description of common UX patterns and usability tips.',  GETDATE(),  NULL,  0, 3, 3, 4, 2, 1 ),
+(N'Introduction to Git', N'Basic Git commands and workflows for beginners.',  GETDATE(), NULL, 0,  1, 2,  1,  1,  1),
+(N'Marketing Metrics 101',  N'Key metrics and KPIs in digital marketing.',  GETDATE(), NULL, 0,  4, 1, 2, 3, 2),
+(N'Project Planning Checklist',  N'A detailed checklist to plan a new project.', GETDATE(), NULL, 0,  5, 3,  1,  4,  1),
+(N'Automated Testing with Selenium', N'How to create robust browser tests using Selenium.',  GETDATE(), NULL, 0, 6, 2,  1,  5,  3),
+(N'Advanced C# Delegates', N'Deep dive into delegates, events, and expressions.', GETDATE(), NULL, 0, 2, 1,  1, 1, 2);
+
+--DocumentTags
+INSERT INTO DocumentTags
+VALUES
+(1, 4),
+(2, 1),
+(3, 4),
+(4, 4),
+(5, 2),
+(6, 3),
+(7, 5),
+(8, 1),
+(1, 1),
+(2, 5)
+
+-- Seed data for Ratings
+INSERT INTO Ratings (Score, DocumentId, UserId)
+VALUES
+(5, 1, 1),
+(4, 1, 2),
+(3, 2, 3),
+(5, 3, 1),
+(2, 2, 2);
+
+--Seed for Comments
+INSERT INTO Comments (Comments, DocumentId, UserId)
+VALUES
+(N'Great explanation!', 1, 1),
+(N'Could use more examples.', 2, 2),
+(N'Very helpful resource.', 3, 3),
+(N'Too brief.', 2, 1),
+(N'Well written.', 1, 3);
+
+--Seed for Versions
+INSERT INTO Versions (VersionName, VersionDate, OLDStateContent, DocumentID)
+VALUES
+(N'v1.0', GETDATE(), N'Initial content of Agile document...', 1),
+(N'v1.1', DATEADD(DAY, 10, GETDATE()), N'Added sprint planning section...', 1),
+(N'v1.0', GETDATE(), N'Basic LINQ explanation...', 2),
+(N'v1.0', GETDATE(), N'UX intro and structure...', 3),
+(N'v2.0', DATEADD(DAY, 30, GETDATE()), N'Revised with user feedback...', 2);
