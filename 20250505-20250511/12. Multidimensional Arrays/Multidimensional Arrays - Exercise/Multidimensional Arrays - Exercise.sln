@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35931.197 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8. Bombs", "8. Bombs\8. Bombs.csproj", "{495C745F-C3C4-4DD7-9540-6FC4C8D28E1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "9. Miner", "9. Miner\9. Miner.csproj", "{0FD15D68-589C-48F2-83E2-49465B66897F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{495C745F-C3C4-4DD7-9540-6FC4C8D28E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{495C745F-C3C4-4DD7-9540-6FC4C8D28E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{495C745F-C3C4-4DD7-9540-6FC4C8D28E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD15D68-589C-48F2-83E2-49465B66897F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD15D68-589C-48F2-83E2-49465B66897F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD15D68-589C-48F2-83E2-49465B66897F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD15D68-589C-48F2-83E2-49465B66897F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
