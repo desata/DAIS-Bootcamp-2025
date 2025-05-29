@@ -1,0 +1,103 @@
+✅ Option 2: Use Enum (Good if AccessLevels are static)
+
+public enum AccessLevel
+{
+    Public = 1,
+    Internal = 2,
+    Confidential = 3
+}
+In User model:
+
+public AccessLevel AccessLevelId { get; set; }
+Validation logic:
+
+
+bool CanUserViewDocument(User user, Document doc)
+{
+    return user.AccessLevelId >= doc.AccessLevelId;
+}
+✅ Same logic, just cleaner with enums.
+
+🧠 Bonus: Extension Method
+
+public static class AccessControlExtensions
+{
+    public static bool CanView(this User user, Document doc) =>
+        user.AccessLevelId >= doc.AccessLevelId;
+}
+
+
+🧠 What to do with name filtering:
+If you want to filter by name (e.g., first name or full name), do it in the service layer like this:
+
+csharp
+Copy
+Edit
+public async IAsyncEnumerable<Document> GetFilteredDocumentsAsync(string? fullName, string? title)
+{
+    // Step 1: Search matching users by name
+    List<int> userIds = new();
+    if (!string.IsNullOrEmpty(fullName))
+    {
+        var userFilter = new Filter();
+        userFilter.AddCondition("CONCAT(FirstName, ' ', LastName)", fullName);
+
+        await foreach (var user in _userRepository.RetrieveCollectionAsync(userFilter))
+        {
+            userIds.Add(user.UserId);
+        }
+    }
+
+    // Step 2: Filter documents by those userIds
+    foreach (int userId in userIds)
+    {
+        var filter = new DocumentFilter
+        {
+            CreatorId = userId,
+            Title = title
+        };
+
+        await foreach (var doc in _documentRepository.RetrieveCollectionAsync(filter))
+        {
+            yield return doc;
+        }
+    }
+}
+
+✅ Example: Filtering by Category Name
+csharp
+Copy
+Edit
+public async IAsyncEnumerable<Document> GetDocumentsByCategoryNameAsync(string categoryName)
+{
+    await foreach (var category in _categoryRepository.RetrieveCollectionAsync(new CategoryFilter { Name = categoryName }))
+    {
+        var filter = new DocumentFilter { CategoryId = category.CategoryId };
+
+        await foreach (var doc in _documentRepository.RetrieveCollectionAsync(filter))
+        {
+            yield return doc;
+        }
+    }
+}
+
+
+Here's how you can do it in your DocumentService
+public async Task<int> CreateNewDocumentVersionAsync(DocumentVersion newVersion)
+{
+    // 1. Archive existing versions of this document
+    await foreach (var existingVersion in _documentVersionRepository.RetrieveCollectionAsync(
+        new DocumentVersionFilter { DocumentId = newVersion.DocumentId }))
+    {
+        if (!existingVersion.IsArchived)
+        {
+            await _documentVersionRepository.UpdateAsync(existingVersion.VersionId, new DocumentVersionUpdate
+            {
+                IsArchived = true
+            });
+        }
+    }
+
+    // 2. Create the new version (non-archived by default)
+    return await _documentVersionRepository.CreateAsync(newVersion);
+}

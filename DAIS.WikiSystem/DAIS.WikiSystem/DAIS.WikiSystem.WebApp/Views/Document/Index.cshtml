@@ -1,0 +1,55 @@
+﻿@using DAIS.WikiSystem.WebApp.Models.ViewModels
+@model DocumentListViewModel
+@{
+    ViewData["Title"] = "All Documents";
+}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Available Documents</h2>
+            <hr />
+        </div>
+    </div>
+
+    @if (Model.Documents.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var document in Model.Documents)
+            {
+                <div class="card">
+                    <h5 class="card-header">@document.Title</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">@document.AccessLevel.ToString()</h5>
+                        <h5 class="card-title">@document.CategoryName</h5>
+                        <h5 class="card-title">@document.CreatorFirstName @document.CreatorLastName </h5>
+                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                        <p class="text-muted">
+                            @string.Join(", ", document.Tags)
+                        </p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="row mt-4">
+            <div class="col">
+                <p class="text-muted">
+                    Total available documents: @Model.Documents.Count
+                </p>
+            </div>
+        </div> <div class="row mt-4">
+            <div class="col">
+                <p class="text-muted">
+                    Total available documents: @Model.TotalCount
+                </p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No documents available at the moment.
+        </div>
+    }
+</div>

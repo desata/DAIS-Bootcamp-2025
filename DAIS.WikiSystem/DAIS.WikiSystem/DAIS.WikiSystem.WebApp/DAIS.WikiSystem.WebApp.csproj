@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DAIS.WikiSystem.Repository\DAIS.WikiSystem.Repository.csproj" />
+    <ProjectReference Include="..\DAIS.WikiSystem.Services\DAIS.WikiSystem.Services.csproj" />
+    <ProjectReference Include="..\DAIS.WikiSystem.Models\DAIS.WikiSystem.Models.csproj" />
+  </ItemGroup>
+
+</Project>
