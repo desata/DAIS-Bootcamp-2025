@@ -1,7 +1,6 @@
 ﻿using DAIS.WikiSystem.Repository.Base;
-using DAIS.WikiSystem.Repository.Interfaces.Category;
 
-namespace DAIS.WikiSystem.Repository.Interfaces
+namespace DAIS.WikiSystem.Repository.Interfaces.Category
 {
     public interface ICategoryRepository : IBaseRepository<Models.Category, CategoryFilter, CategoryUpdate>
     {

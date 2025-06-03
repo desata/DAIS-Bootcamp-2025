@@ -2,7 +2,8 @@
 {
     public class CreateDocumentVersionResponse : DocumentVersionInfo
     {
-        public bool Success { get; set; }
+        public bool IsSuccess { get; set; }
         public string? ErrorMessage { get; set; }
+
     }
 }

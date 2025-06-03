@@ -2,6 +2,6 @@
 {
     public class DocumentVersionUpdate
     {
-        public bool? IsArchived { get; set; }
+        public bool IsArchived { get; set; }
     }
 }

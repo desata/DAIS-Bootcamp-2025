@@ -7,7 +7,7 @@ namespace DAIS.WikiSystem.Models
         public int DocumentVersionId { get; set; }
 
         [Required(ErrorMessage = "Content is required")]
-        public required string Content { get; set; }
+        public required string FilePath { get; set; }
 
         [Required(ErrorMessage = "Version is required")]
         [StringLength(12, MinimumLength = 1, ErrorMessage = "Version must be up to 12 characters")]

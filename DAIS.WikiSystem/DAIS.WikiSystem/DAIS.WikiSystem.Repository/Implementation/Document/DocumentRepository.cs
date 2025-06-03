@@ -57,17 +57,17 @@ namespace DAIS.WikiSystem.Repository.Implementation.Document
 
             if (filter.CategoryId.HasValue)
             {
-                commandFilter.AddCondition("CategoryId", filter.CategoryId.Value);
+                commandFilter.AddCondition("CategoryId", filter.CategoryId.Value.Value);
             }
 
             if (filter.CreatorId.HasValue)
             {
-                commandFilter.AddCondition("CreatorId", filter.CreatorId.Value);
+                commandFilter.AddCondition("CreatorId", filter.CreatorId.Value.Value);
             }
 
-            if (filter.AccessLevel.HasValue)
+            if (filter.MaxAccessLevel.HasValue)
             {
-                commandFilter.AddCondition("AccessLevel", filter.AccessLevel.Value);
+                commandFilter.AddCondition("AccessLevel", (int)filter.MaxAccessLevel.Value, "<=");
             }
 
             return base.RetrieveCollectionAsync(commandFilter);

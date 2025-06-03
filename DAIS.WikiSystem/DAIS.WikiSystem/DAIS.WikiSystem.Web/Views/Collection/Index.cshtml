@@ -1,0 +1,59 @@
+﻿@using DAIS.WikiSystem.Web.Models.ViewModels.Collection
+@model CollectionsListViewModel
+@{
+    ViewData["Title"] = "Collections";
+}
+
+<div class="container mt-4">
+    <h2>Collections</h2>
+
+    <!-- Create Collection Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Create New Collection</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label asp-for="NewCollection.Name" class="form-label"></label>
+                    <input asp-for="NewCollection.Name" class="form-control" />
+                    <span asp-validation-for="NewCollection.Name" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="NewCollection.CreatorId" />
+
+                <button type="submit" class="btn btn-primary">Create Collection</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Collections List -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Creator Id</th>
+                <th>Create Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var collection in Model.Collections)
+            {
+                <tr>
+                    <td>@collection.Name</td>
+                    <td>@collection.CreatorId</td>
+                    <td>@collection.CreateDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@collection.CollectionId" class="btn btn-sm btn-outline-info">Details</a>
+                        <a asp-action="AddDocuments" asp-route-id="@collection.CollectionId" class="btn btn-sm btn-outline-primary">Add Documents</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

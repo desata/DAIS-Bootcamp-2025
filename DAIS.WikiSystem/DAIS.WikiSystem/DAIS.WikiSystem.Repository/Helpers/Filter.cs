@@ -1,14 +1,17 @@
-﻿namespace DAIS.WikiSystem.Repository.Helpers
+﻿using DAIS.WikiSystem.Repository.Interfaces.Document;
+
+namespace DAIS.WikiSystem.Repository.Helpers
 {
     public class Filter
     {
-        public static Filter Empty => new Filter();
-        public Dictionary<string, object> Conditions { get; set; } = new Dictionary<string, object>();
+        private readonly List<FilterCondition> _conditions = new();
 
-        public Filter AddCondition(string field, object value)
+        public void AddCondition(string field, object value, string op = "=")
         {
-            Conditions[field] = value;
-            return this;
+            _conditions.Add(new FilterCondition { Field = field, Value = value, Operator = op });
         }
+
+        public IEnumerable<FilterCondition> Conditions => _conditions;
     }
+
 }

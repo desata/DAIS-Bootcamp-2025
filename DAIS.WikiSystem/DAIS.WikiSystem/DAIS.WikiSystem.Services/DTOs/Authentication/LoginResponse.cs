@@ -4,7 +4,7 @@ namespace DAIS.WikiSystem.Services.DTOs.Authentication
 {
     public class LoginResponse
     {
-        public bool Success { get; set; }
+        public bool IsSuccess { get; set; }
         public int? UserId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

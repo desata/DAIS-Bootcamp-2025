@@ -1,5 +1,4 @@
-﻿using DAIS.WikiSystem.Repository.Interfaces;
-using DAIS.WikiSystem.Repository.Interfaces.Category;
+﻿using DAIS.WikiSystem.Repository.Interfaces.Category;
 using DAIS.WikiSystem.Services.DTOs.Category;
 using DAIS.WikiSystem.Services.Interfaces.Category;
 
@@ -13,21 +12,23 @@ namespace DAIS.WikiSystem.Services.Implementation.Category
         {
             _categoryRepository = categoryRepository;
         }
-
         public async Task<GetAllCategoriesResponse> GetAllAsync()
         {
             var categories = await _categoryRepository.RetrieveCollectionAsync(new CategoryFilter()).ToListAsync();
-            var allCategoriesResponse = new GetAllCategoriesResponse
+
+            var allCategories = new GetAllCategoriesResponse
             {
                 Categories = categories.Select(MapToCategoryInfo).ToList(),
-                TotalCount = categories.Count
+                Count = categories.Count
             };
-            return allCategoriesResponse;
+            return allCategories;
+
         }
 
-        public async Task<GetCategoryResponse> GetByIdAsync(int categoryid)
+        public async Task<GetCategoryResponse> GetByIdAsync(int categoryId)
         {
-            var category = await _categoryRepository.RetrieveAsync(categoryid);
+            var category = await _categoryRepository.RetrieveAsync(categoryId);
+
             return (GetCategoryResponse)MapToCategoryInfo(category);
         }
 
@@ -39,6 +40,5 @@ namespace DAIS.WikiSystem.Services.Implementation.Category
                 Name = category.Name
             };
         }
-
     }
 }

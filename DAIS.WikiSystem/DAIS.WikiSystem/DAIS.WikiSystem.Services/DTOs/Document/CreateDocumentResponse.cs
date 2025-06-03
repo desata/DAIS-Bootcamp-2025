@@ -1,8 +1,8 @@
 ﻿namespace DAIS.WikiSystem.Services.DTOs.Document
 {
-    public class CreateDocumentResponse : DocumentInfo
+    public class CreateDocumentResponse 
     {
-        public bool Success { get; set; }
-        public string? ErrorMessage { get; set; }
+        public int DocumentId { get; set; }
+        public int DocumentVersionId { get; set; }
     }
 }

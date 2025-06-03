@@ -19,14 +19,25 @@ namespace DAIS.WikiSystem.Repository.Implementation.CollectionDocument
                 DocumentId = Convert.ToInt32(reader["DocumentId"])
             };
         }
-
-        public async Task<bool> AddIfNotExistsAsync(int collectionId, int documentId)
+        public async Task<bool> AddIfNotExistsAsync(int collectionId, List<int> documentIds)
         {
-            return await CreateMappingIfNotExistsAsync(new Models.CollectionDocument
+            bool allSucceeded = true;
+
+            foreach (int documentId in documentIds)
             {
-                CollectionId = collectionId,
-                DocumentId = documentId
-            });
+                bool success = await CreateMappingIfNotExistsAsync(new Models.CollectionDocument
+                {
+                    CollectionId = collectionId,
+                    DocumentId = documentId
+                });
+
+                if (!success)
+                {
+                    allSucceeded = false;
+                }
+            }
+
+            return allSucceeded;
         }
 
         public async Task<bool> RemoveAsync(int collectionId, int documentId)
@@ -64,6 +75,5 @@ namespace DAIS.WikiSystem.Repository.Implementation.CollectionDocument
             return base.RetrieveAsync("CollectionDocumentId", objectId);
         }
 
-        
     }
 }

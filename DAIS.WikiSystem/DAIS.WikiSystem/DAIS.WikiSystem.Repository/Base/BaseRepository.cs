@@ -72,10 +72,12 @@ namespace DAIS.WikiSystem.Repository.Base
 
             command.CommandText = @$"{SelectAllCommandText()} WHERE 1 = 1";
 
+            int paramIndex = 0;
             foreach (var condition in filter.Conditions)
             {
-                command.CommandText += $" AND {condition.Key} = @{condition.Key}";
-                command.Parameters.AddWithValue($"@{condition.Key}", condition.Value);
+                string paramName = $"@param{paramIndex++}";
+                command.CommandText += $" AND {condition.Field} {condition.Operator} {paramName}";
+                command.Parameters.AddWithValue(paramName, condition.Value);
             }
 
             using SqlDataReader reader = await command.ExecuteReaderAsync();

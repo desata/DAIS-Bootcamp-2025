@@ -20,7 +20,7 @@ namespace DAIS.WikiSystem.Repository.Implementation.Tag
         }
         public Task<int> CreateAsync(Models.Tag entity)
         {
-            return base.CreateAsync(entity, IdDbFieldEnumeratorName);
+            throw new NotImplementedException();
         }
         public Task<Models.Tag> RetrieveAsync(int objectId)
         {
@@ -41,7 +41,7 @@ namespace DAIS.WikiSystem.Repository.Implementation.Tag
 
             return base.RetrieveCollectionAsync(commandFilter);
         }
-        public Task<bool> UpdateAsync(int objectId, Interfaces.Tag.TagUpdate update)
+        public Task<bool> UpdateAsync(int objectId, TagUpdate update)
         {
             throw new NotImplementedException();
         }

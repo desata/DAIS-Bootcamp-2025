@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DAIS.WikiSystem.Models\DAIS.WikiSystem.Models.csproj" />
     <ProjectReference Include="..\DAIS.WikiSystem.Repository\DAIS.WikiSystem.Repository.csproj" />
   </ItemGroup>
 

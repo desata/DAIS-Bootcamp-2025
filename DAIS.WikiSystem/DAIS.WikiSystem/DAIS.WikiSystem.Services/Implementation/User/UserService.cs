@@ -25,7 +25,6 @@ namespace DAIS.WikiSystem.Services.Implementation.User
                 UserId = user.UserId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Username = user.Username,
                 Role = (Role)user.Role,
                 AccessLevel = (AccessLevel)user.AccessLevel,
             };

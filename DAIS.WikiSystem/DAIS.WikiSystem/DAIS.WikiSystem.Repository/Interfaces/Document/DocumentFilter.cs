@@ -10,7 +10,7 @@ namespace DAIS.WikiSystem.Repository.Interfaces.Document
         public SqlInt32? CreatorId { get; set; }
         public SqlInt32? CategoryId { get; set; }
         public SqlInt32? DocumentId { get; set; }
-        public AccessLevel? AccessLevel { get; set; }
+        public AccessLevel? MaxAccessLevel { get; set; }
 
 
     }

@@ -14,6 +14,10 @@ namespace DAIS.WikiSystem.Services.DTOs.Document
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public List<string> Tags { get; set; }
-    }
+        public string FilePath { get; set; }
+        public string Version { get; set; }
+        public bool IsArchived { get; set; }
+        public DateTime CreateDate { get; set; }
 
+    }
 }

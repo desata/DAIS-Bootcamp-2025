@@ -9,9 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAIS.WikiSystem.Repository"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAIS.WikiSystem.ConsoleApplication", "DAIS.WikiSystem.ConsoleApplication\DAIS.WikiSystem.ConsoleApplication.csproj", "{5AF29A58-FED6-471E-A4D9-9A842E86AAE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAIS.WikiSystem.Services", "DAIS.WikiSystem.Services\DAIS.WikiSystem.Services.csproj", "{205D6F41-A21B-44C6-ADEF-DE12C90237F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAIS.WikiSystem.Services", "DAIS.WikiSystem.Services\DAIS.WikiSystem.Services.csproj", "{F5DF8A49-441A-4AB8-AB08-227358D461A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAIS.WikiSystem.WebApp", "DAIS.WikiSystem.WebApp\DAIS.WikiSystem.WebApp.csproj", "{4A8753B0-BD7B-4D04-B319-F83162430784}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAIS.WikiSystem.Web", "DAIS.WikiSystem.Web\DAIS.WikiSystem.Web.csproj", "{119699BF-7507-4820-BEDF-5010AAC85880}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F5DF8A49-441A-4AB8-AB08-227358D461A0} = {F5DF8A49-441A-4AB8-AB08-227358D461A0}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +34,14 @@ Global
 		{5AF29A58-FED6-471E-A4D9-9A842E86AAE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AF29A58-FED6-471E-A4D9-9A842E86AAE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AF29A58-FED6-471E-A4D9-9A842E86AAE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{205D6F41-A21B-44C6-ADEF-DE12C90237F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{205D6F41-A21B-44C6-ADEF-DE12C90237F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{205D6F41-A21B-44C6-ADEF-DE12C90237F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{205D6F41-A21B-44C6-ADEF-DE12C90237F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A8753B0-BD7B-4D04-B319-F83162430784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A8753B0-BD7B-4D04-B319-F83162430784}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A8753B0-BD7B-4D04-B319-F83162430784}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A8753B0-BD7B-4D04-B319-F83162430784}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5DF8A49-441A-4AB8-AB08-227358D461A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5DF8A49-441A-4AB8-AB08-227358D461A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5DF8A49-441A-4AB8-AB08-227358D461A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5DF8A49-441A-4AB8-AB08-227358D461A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{119699BF-7507-4820-BEDF-5010AAC85880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{119699BF-7507-4820-BEDF-5010AAC85880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{119699BF-7507-4820-BEDF-5010AAC85880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{119699BF-7507-4820-BEDF-5010AAC85880}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,28 @@
+﻿@using ExamPrep.Web.Models.ViewModels
+@model UserListViewModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2>All Users (@Model.TotalCount)</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Username (Email)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserId</td>
+                <td>@user.Name</td>
+                <td>@user.Username</td>
+            </tr>
+        }
+    </tbody>
+</table>

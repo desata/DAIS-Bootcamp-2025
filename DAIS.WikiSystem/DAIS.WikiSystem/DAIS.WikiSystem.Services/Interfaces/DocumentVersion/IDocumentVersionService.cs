@@ -4,9 +4,10 @@ namespace DAIS.WikiSystem.Services.Interfaces.DocumentVersion
 {
     public interface IDocumentVersionService
     {
-        Task<GetAllDocumentVersionByDocumentIdResponse> GetAllByDocumentIdAsync(int documentId);
-        Task<GetActiveDocumentVersionByIdResponse> GetActiveVersionByIdAsync(int documentId);
+        Task<GetDocumentVersionResponse> GetByIdAsync(int documentVersionId);
+        Task<GetAllDocumentVersionResponse> GetAllAsync(int documentId);
         Task<CreateDocumentVersionResponse> CreateDocumentVersionAsync(CreateDocumentVersionRequest request);
-        Task GetAllAsync();
+        Task<UpdateDocumentVersionResponse> UpdateDocumentVersionAsync(UpdateDocumentVersionRequest request);
+
     }
 }

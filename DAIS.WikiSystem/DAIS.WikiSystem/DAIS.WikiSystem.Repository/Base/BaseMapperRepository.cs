@@ -28,6 +28,14 @@ namespace DAIS.WikiSystem.Repository.Base
             return Convert.ToInt32(await command.ExecuteNonQueryAsync()) > 0;
         }
 
+        protected async Task CreateMappingsIfNotExistAsync(IEnumerable<TObj> entities)
+        {
+            foreach (var entity in entities)
+            {
+                await CreateMappingIfNotExistsAsync(entity);
+            }
+        }
+
         protected async Task<bool> DeleteMappingAsync(TObj entity)
         {
             using SqlConnection connection = await ConnectionFactory.CreateConnectionAsync();

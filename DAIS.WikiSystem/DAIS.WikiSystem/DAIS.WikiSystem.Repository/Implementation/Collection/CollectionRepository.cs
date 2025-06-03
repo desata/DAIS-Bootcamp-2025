@@ -9,7 +9,7 @@ namespace DAIS.WikiSystem.Repository.Implementation.Collection
     {
         private const string IdDbFieldEnumeratorName = "CollectionId";
         protected override string GetTableName() => "Collections";
-        protected override string[] GetColumns() => new[] { IdDbFieldEnumeratorName, "Name", "CreatorId" };
+        protected override string[] GetColumns() => new[] { IdDbFieldEnumeratorName, "Name", "CreatorId", "CreateDate" };
 
         protected override Models.Collection MapEntity(SqlDataReader reader)
         {
@@ -17,7 +17,9 @@ namespace DAIS.WikiSystem.Repository.Implementation.Collection
             {
                 CollectionId = Convert.ToInt32(reader[IdDbFieldEnumeratorName]),
                 Name = Convert.ToString(reader["Name"]),
-                CreatorId = Convert.ToInt32(reader["CreatorId"])
+                CreatorId = Convert.ToInt32(reader["CreatorId"]),
+                CreateDate = Convert.ToDateTime(reader["CreateDate"])
+
             };
         }
 

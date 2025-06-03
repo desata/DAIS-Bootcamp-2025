@@ -5,7 +5,6 @@ using DAIS.WikiSystem.Services.Interfaces.Tag;
 namespace DAIS.WikiSystem.Services.Implementation.Tag
 {
     public class TagService : ITagService
-
     {
         private readonly ITagRepository _tagRepository;
 
@@ -14,21 +13,23 @@ namespace DAIS.WikiSystem.Services.Implementation.Tag
             _tagRepository = tagRepository;
         }
 
-        public async Task<GetAllTagsResponse> GetAllAsync()
+        public async Task<GetAllTagResponse> GetAllAsync()
         {
             var tags = await _tagRepository.RetrieveCollectionAsync(new TagFilter()).ToListAsync();
-            var allTagsResponse = new GetAllTagsResponse
+            var allTags = new GetAllTagResponse
             {
                 Tags = tags.Select(MapToTagInfo).ToList(),
-                TotalCount = tags.Count
+                Count = tags.Count
             };
-            return allTagsResponse;
+            return allTags;
         }
 
         public async Task<GetTagResponse> GetByIdAsync(int tagId)
         {
             var tag = await _tagRepository.RetrieveAsync(tagId);
+
             return (GetTagResponse)MapToTagInfo(tag);
+
         }
 
         private TagInfo MapToTagInfo(Models.Tag tag)

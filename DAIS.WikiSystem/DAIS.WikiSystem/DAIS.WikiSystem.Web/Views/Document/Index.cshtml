@@ -1,0 +1,71 @@
+﻿@using DAIS.WikiSystem.Web.Models.ViewModels.Document
+@model DocumentListViewModel
+@{
+    ViewData["Title"] = "All Documents";
+}
+
+<div class="container mt-4">
+    <h2>Collections</h2>
+
+    <!-- Create Collection Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Create New Collection</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label asp-for="NewCollection.Name" class="form-label"></label>
+                    <input asp-for="NewCollection.Name" class="form-control" />
+                    <span asp-validation-for="NewCollection.Name" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="NewDocument.CreatorId" />
+
+                <button type="submit" class="btn btn-primary">Create Document</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Collections List -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>CategoryName</th>
+                <th>CreatorLastName</th>
+                <th>AccessLevel</th>
+                <th>Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var document in Model.Documents)
+            {
+                <tr>
+                    <td>@document.Title</td>
+                    <td>@document.CategoryName</td>
+                    <td>@document.CreatorLastName</td>
+                    <td>@document.AccessLevel.ToString()</td>
+                    <td>
+                        @if (document.AccessLevel == 0)
+                        {
+                            <span class="badge bg-success">Today!</span>
+                        }
+                        else
+                        {
+                            @string.Join(", ", document.Tags)
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@document.DocumentId" class="btn btn-sm btn-outline-info">Details</a>
+                        <a asp-action="AddDocuments" asp-route-id="@document.DocumentId" class="btn btn-sm btn-outline-primary">Add Documents</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

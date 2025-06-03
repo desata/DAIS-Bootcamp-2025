@@ -2,7 +2,7 @@
 {
     public class GetAllCategoriesResponse
     {
-        public List<CategoryInfo>? Categories { get; set; }
-        public int TotalCount { get; set; }
+        public List<CategoryInfo> Categories { get; set; }
+        public int Count { get; set; }
     }
 }

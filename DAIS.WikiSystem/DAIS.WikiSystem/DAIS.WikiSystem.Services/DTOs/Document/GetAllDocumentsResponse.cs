@@ -1,8 +1,8 @@
 ﻿namespace DAIS.WikiSystem.Services.DTOs.Document
 {
-    public class GetAllDocumentsResponse //: DocumentInfo
+    public class GetAllDocumentsResponse
     {
         public List<DocumentInfo> Documents { get; set; }
-        public int TotalCount { get; set; }
+        public int Count { get; set; }
     }
 }

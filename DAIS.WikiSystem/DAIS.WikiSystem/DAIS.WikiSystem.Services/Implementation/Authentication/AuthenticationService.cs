@@ -1,5 +1,4 @@
-﻿using DAIS.WikiSystem.Models.Enums;
-using DAIS.WikiSystem.Repository.Interfaces.User;
+﻿using DAIS.WikiSystem.Repository.Interfaces.User;
 using DAIS.WikiSystem.Services.DTOs.Authentication;
 using DAIS.WikiSystem.Services.Helpers;
 using DAIS.WikiSystem.Services.Interfaces.Authentication;
@@ -13,7 +12,7 @@ namespace DAIS.WikiSystem.Services.Implementation.Authentication
 
         public AuthenticationService(IUserRepository userRepository)
         {
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _userRepository = userRepository;
         }
 
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
@@ -22,7 +21,7 @@ namespace DAIS.WikiSystem.Services.Implementation.Authentication
             {
                 return new LoginResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     ErrorMessage = "Username and password are required"
                 };
             }
@@ -37,20 +36,19 @@ namespace DAIS.WikiSystem.Services.Implementation.Authentication
             {
                 return new LoginResponse
                 {
-                    Success = false,
+                    IsSuccess = false,
                     ErrorMessage = "Invalid username or password"
                 };
             }
 
             return new LoginResponse
             {
-                Success = true,
+                IsSuccess = true,
                 UserId = user.UserId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Role = (Role)user.Role,
-                AccessLevel = (AccessLevel)user.AccessLevel,
-
+                AccessLevel = user.AccessLevel,
+                Role = user.Role
             };
         }
     }

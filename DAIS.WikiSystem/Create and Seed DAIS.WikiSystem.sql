@@ -45,7 +45,7 @@ CREATE TABLE Documents (
 
 CREATE TABLE DocumentVersions (
     DocumentVersionsId INT PRIMARY KEY IDENTITY NOT NULL, 
-	Content NVARCHAR(MAX) NOT NULL,    	
+	FilePath NVARCHAR(MAX) NOT NULL,    	
 	Version VARCHAR(12) NOT NULL,
 	IsArchived BIT NOT NULL DEFAULT 0,
 	CreateDate DATETIME NOT NULL DEFAULT GETDATE(),
@@ -120,7 +120,7 @@ INSERT INTO Documents (Title, CreatorId, CategoryId, AccessLevelId) VALUES
 ('Document 17', 17, 17, 2), ('Document 18', 18, 18, 3), ('Document 19', 19, 19, 1), ('Document 20', 20, 20, 2);
 
 
-INSERT INTO DocumentVersions (Content, Version, DocumentId) VALUES
+INSERT INTO DocumentVersions (FilePath, Version, DocumentId) VALUES
 ('Content A', 'v1.0', 1), ('Content B', 'v1.0', 2), ('Content C', 'v1.0', 3), ('Content D', 'v1.0', 4),
 ('Content E', 'v1.0', 5), ('Content F', 'v1.0', 6), ('Content G', 'v1.0', 7), ('Content H', 'v1.0', 8),
 ('Content I', 'v1.0', 9), ('Content J', 'v1.0', 10), ('Content K', 'v1.0', 11), ('Content L', 'v1.0', 12),

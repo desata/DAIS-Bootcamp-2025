@@ -2,7 +2,7 @@
 {
     public class CreateCollectionResponse : CollectionInfo
     {
-        public bool Success { get; set; }
+        public bool IsSuccess { get; set; }
         public string? ErrorMessage { get; set; }
     }
 }

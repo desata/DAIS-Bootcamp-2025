@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 
 namespace DAIS.WikiSystem.Repository.Implementation.DocumentVersion
 {
-    public class DocumentVersionRepository : BaseRepository<Models.DocumentVersion>, IDocumentVersionsRepository
+    public class DocumentVersionRepository : BaseRepository<Models.DocumentVersion>, IDocumentVersionRepository
     {
         private const string IdDbFieldEnumeratorName = "DocumentVersionId";
 
@@ -15,34 +15,31 @@ namespace DAIS.WikiSystem.Repository.Implementation.DocumentVersion
             return new[]
             {
                 "DocumentVersionId",
-                "Content",
+                "FilePath",
                 "Version",
                 "IsArchived",
                 "CreateDate",
-                "DocumentId" };
-
+                "DocumentId"
+            };
         }
 
         protected override Models.DocumentVersion MapEntity(SqlDataReader reader)
         {
             return new Models.DocumentVersion
             {
-                DocumentVersionId = reader.GetInt32(reader.GetOrdinal("DocumentVersionsId")),
-                Content = reader.GetString(reader.GetOrdinal("Content")),
-                Version = reader.GetString(reader.GetOrdinal("Version")),
-                //IsArchived = reader.GetBoolean(reader.GetOrdinal("IsArchived")),
-                // CreateDate = reader.GetDateTime(reader.GetOrdinal("CreateDate")),
-                DocumentId = reader.GetInt32(reader.GetOrdinal("DocumentId"))
+                DocumentVersionId = Convert.ToInt32(reader["DocumentVersionId"]),
+                FilePath = Convert.ToString(reader["FilePath"]),
+                Version = Convert.ToString(reader["Version"]),
+                IsArchived = Convert.ToBoolean(reader["IsArchived"]),
+                DocumentId = Convert.ToInt32(reader["DocumentId"]),
+                CreateDate = Convert.ToDateTime(reader["CreateDate"])
             };
         }
-
-
 
         public async Task<int> CreateAsync(Models.DocumentVersion entity)
         {
             return await base.CreateAsync(entity, IdDbFieldEnumeratorName);
         }
-
 
         public Task<Models.DocumentVersion> RetrieveAsync(int objectId)
         {
@@ -71,10 +68,7 @@ namespace DAIS.WikiSystem.Repository.Implementation.DocumentVersion
 
             using var updateCommand = new UpdateCommand(connection, GetTableName(), IdDbFieldEnumeratorName, objectId);
 
-            if (update.IsArchived is not null)
-            {
-                updateCommand.AddSetClause("IsArchived", update.IsArchived);
-            }
+            updateCommand.AddSetClause("IsArchived", update.IsArchived);
 
             return await updateCommand.ExecuteNonQueryAsync() == 1;
         }

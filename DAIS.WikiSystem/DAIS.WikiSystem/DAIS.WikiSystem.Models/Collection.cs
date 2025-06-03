@@ -13,5 +13,8 @@ namespace DAIS.WikiSystem.Models
 
         [Required(ErrorMessage = "Creator is required")]
         public int CreatorId { get; set; }
+
+        [Required(ErrorMessage = "Creation date is required")]
+        public DateTime CreateDate { get; set; }
     }
 }

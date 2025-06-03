@@ -1,262 +1,246 @@
 ﻿using DAIS.WikiSystem.Models;
 using DAIS.WikiSystem.Models.Enums;
-using DAIS.WikiSystem.Repository.Interfaces;
+using DAIS.WikiSystem.Repository.Interfaces.Category;
 using DAIS.WikiSystem.Repository.Interfaces.Document;
 using DAIS.WikiSystem.Repository.Interfaces.DocumentTag;
+using DAIS.WikiSystem.Repository.Interfaces.DocumentVersion;
 using DAIS.WikiSystem.Repository.Interfaces.Tag;
 using DAIS.WikiSystem.Repository.Interfaces.User;
 using DAIS.WikiSystem.Services.DTOs.Document;
+using DAIS.WikiSystem.Services.DTOs.DocumentVersion;
 using DAIS.WikiSystem.Services.Interfaces.Document;
-using System.Data.SqlTypes;
-using System.Reflection.Metadata;
-using System.Xml.Linq;
+using DAIS.WikiSystem.Services.Interfaces.DocumentVersion;
 
 namespace DAIS.WikiSystem.Services.Implementation.Document
 {
     public class DocumentService : IDocumentService
     {
         private readonly IDocumentRepository _documentRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IDocumentTagRepository _documentTagRepository;
+        private readonly IDocumentVersionRepository _documentVersionRepository;
+        private readonly IDocumentTagRepository _documentsTagsRepository;
         private readonly ITagRepository _tagRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IDocumentVersionService _documentVersionService;
 
-        public DocumentService(IDocumentRepository documentRepository, IUserRepository userRepository, IDocumentTagRepository docTagRepo, ITagRepository tagRepo, ICategoryRepository categoryRepository)
+        public DocumentService(IDocumentRepository documentRepository, 
+            IDocumentVersionRepository documentVersionRepository, 
+            IDocumentTagRepository documentTagRepository, 
+            ITagRepository tagRepository,
+            ICategoryRepository categoryRepository,
+            IUserRepository userRepository,
+            IDocumentVersionService documentVersionService
+            )
         {
             _documentRepository = documentRepository;
-            _userRepository = userRepository;
-            _documentTagRepository = docTagRepo;
-            _tagRepository = tagRepo;
+            _documentVersionRepository = documentVersionRepository;
+            _documentsTagsRepository = documentTagRepository;
+            _tagRepository = tagRepository;
             _categoryRepository = categoryRepository;
+            _userRepository = userRepository;
+            _documentVersionService = documentVersionService;
         }
 
         public async Task<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request)
         {
-
-            var existingDocuments = await _documentRepository
-                 .RetrieveCollectionAsync(new DocumentFilter
-                 {
-                     Title = new SqlString(request.Title),
-                     CreatorId = request.CreatorId
-                 })
-                 .ToListAsync();
-
-            if (existingDocuments.Any())
-            {
-                return new CreateDocumentResponse
-                {
-                    Success = false,
-                    ErrorMessage = "You already have a document with this title."
-                };
-            }
-
             var document = new Models.Document
             {
                 Title = request.Title,
-                CreatorId = request.CreatorId,
                 CategoryId = request.CategoryId,
+                CreatorId = request.CreatorId,
                 AccessLevel = request.AccessLevel,
-                IsDeleted = request.IsDeleted
+                IsDeleted = false
             };
 
-            int newId = await _documentRepository.CreateAsync(document);
+            var documentId = await _documentRepository.CreateAsync(document);
 
-            if (request.TagIds?.Any() == true)
+            var versionResponse = await _documentVersionService.CreateDocumentVersionAsync(new CreateDocumentVersionRequest
+            {
+                DocumentId = documentId,
+                FilePath = request.FilePath
+            });
+
+            if (request.TagIds is { Count: > 0 })
             {
                 foreach (var tagId in request.TagIds)
                 {
-                    int effectiveTagId = tagId;
-
-                    var tag = await _tagRepository.RetrieveAsync(tagId);
-                    if (tag == null)
+                    await _documentsTagsRepository.CreateMappingIfNotExistsAsync(new DocumentTag
                     {
-
-                        effectiveTagId = await _tagRepository.CreateAsync(new Models.Tag { Name = $"Tag{tagId}" });
-                    }
-
-                    await _documentTagRepository.CreateMappingIfNotExistsAsync(
-                        new DocumentTag { DocumentId = newId, TagId = effectiveTagId }
-                    );
+                        DocumentId = documentId,
+                        TagId = tagId
+                    });
                 }
             }
 
             return new CreateDocumentResponse
             {
-                Success = true,
-                DocumentId = newId
+                DocumentId = documentId,
+                DocumentVersionId = versionResponse.DocumentVersionId
             };
-
         }
 
-
-        public async Task<GetAllDocumentsResponse> GetByAccessLevelAsync(int accessLevelId)
-        {
-            var filter = new DocumentFilter
-            {
-                AccessLevel = (AccessLevel)accessLevelId,
-                IsDeleted = false
-            };
-            var documents = await _documentRepository.RetrieveCollectionAsync(filter).ToListAsync();
-
-            var response = new GetAllDocumentsResponse
-            {
-                Documents = new List<DocumentInfo>(),
-                TotalCount = documents.Count
-            };
-
-            foreach (var document in documents)
-            {
-                var documentInfo = await MapToDocumentFullInfo(document);
-                response.Documents.Add(documentInfo);
-            }
-
-            return response;
-        }
-
-        public async Task<GetAllDocumentsResponse> GetByCategoryIdAsync(int categoryId)
+        public async Task<GetAllDocumentsResponse> GetAllActiveAsync(AccessLevel currentUserAccessLevel)
         {
             var filter = new DocumentFilter
             {
                 IsDeleted = false,
-                CategoryId = categoryId
+                MaxAccessLevel = currentUserAccessLevel
             };
-
             var documents = await _documentRepository.RetrieveCollectionAsync(filter).ToListAsync();
 
-            var response = new GetAllDocumentsResponse
+            var mappedDocumentsTasks = documents.Select(MapToDocumentInfoAsync);
+            var mappedDocuments = await Task.WhenAll(mappedDocumentsTasks);
+
+            return new GetAllDocumentsResponse
             {
-                Documents = new List<DocumentInfo>(),
-                TotalCount = documents.Count
+                Documents = mappedDocuments.ToList(),
+                Count = mappedDocuments.Length
             };
-
-            foreach (var document in documents)
-            {
-                var documentInfo = await MapToDocumentFullInfo(document);
-                response.Documents.Add(documentInfo);
-            }
-
-            return response;
         }
 
-        public async Task<GetAllDocumentsResponse> GetByCreatorIdAsync(int creatorId)
+        public async Task<GetAllDocumentsResponse> GetAllAsync()
+        {
+            var documents = await _documentRepository.RetrieveCollectionAsync(new DocumentFilter()).ToListAsync();
+
+            var mappedDocuments = await Task.WhenAll(documents.Select(MapToDocumentInfoAsync));
+
+            return new GetAllDocumentsResponse
+            {
+                Documents = mappedDocuments.ToList(),
+                Count = mappedDocuments.Length
+            };
+        }
+
+        public async Task<GetAllDocumentsResponse> GetAllByCreatorIdAsync(int creatorId)
         {
             var filter = new DocumentFilter
             {
-                IsDeleted = false,
                 CreatorId = creatorId
             };
 
             var documents = await _documentRepository.RetrieveCollectionAsync(filter).ToListAsync();
 
-            var response = new GetAllDocumentsResponse
+            var mappedDocuments = await Task.WhenAll(documents.Select(MapToDocumentInfoAsync));
+
+            return new GetAllDocumentsResponse
             {
-                Documents = new List<DocumentInfo>(),
-                TotalCount = documents.Count
+                Documents = mappedDocuments.ToList(),
+                Count = mappedDocuments.Length
             };
-
-            foreach (var document in documents)
-            {
-                var documentInfo = await MapToDocumentFullInfo(document);
-                response.Documents.Add(documentInfo);
-            }
-
-            return response;
         }
 
+        public async Task<GetDocumentResponse> GetByIdAsync(int documentId)
+        {            
+            var document = await _documentRepository.RetrieveAsync(documentId);
 
-        public async Task<GetAllDocumentsResponse> GetAllAsync()
-        {
-            var filter = new DocumentFilter
+            if (document == null)
             {
-                IsDeleted = false
-            };
-
-            var documents = await _documentRepository.RetrieveCollectionAsync(filter).ToListAsync();
-
-            var response = new GetAllDocumentsResponse
-            {
-                Documents = new List<DocumentInfo>(),
-                TotalCount = documents.Count
-            };
-
-            foreach (var document in documents)
-            {
-                var documentInfo = await MapToDocumentFullInfo(document);
-                response.Documents.Add(documentInfo);
+                throw new Exception("Document not found");
             }
-
-            return response;
-        }
-
-
-        public async Task<GetAllDocumentsResponse> GetByTitleAsync(string title)
-        {
-            var filter = new DocumentFilter
-            {
-                Title = title,
-                IsDeleted = false
-            };
-
-            var documents = await _documentRepository.RetrieveCollectionAsync(filter).ToListAsync();
-
-            var response = new GetAllDocumentsResponse
-            {
-                Documents = new List<DocumentInfo>(),
-                TotalCount = documents.Count
-            };
-
-            foreach (var document in documents)
-            {
-                var documentInfo = await MapToDocumentFullInfo(document);
-                response.Documents.Add(documentInfo);
-            }
-
-            return response;
-        }
-
-        private async Task<DocumentInfo> MapToDocumentFullInfo(Models.Document document)
-        {
 
             var creator = await _userRepository.RetrieveAsync(document.CreatorId);
-            var category = await _categoryRepository.RetrieveAsync(document.CategoryId);
-            var tagMappingIds = await _documentTagRepository.RetrieveCollectionAsync(new DocumentTagFilter { DocumentId = document.DocumentId }).Select(tm => tm.TagId).ToListAsync();
-            var tags = new List<Models.Tag>();
 
-            if (tagMappingIds.Any())
+            var category = await _categoryRepository.RetrieveAsync(document.CategoryId);
+            
+            var version = await _documentVersionRepository.RetrieveCollectionAsync(
+                new DocumentVersionFilter { DocumentId = documentId , IsArchived = false}).FirstOrDefaultAsync();
+            var documentTags = await _documentsTagsRepository.RetrieveCollectionAsync(
+                new DocumentTagFilter { DocumentId = documentId }).ToListAsync();
+            var tagNames = new List<string>();
+            foreach (var dt in documentTags)
             {
-                foreach (var item in tagMappingIds)
+                var tag = await _tagRepository.RetrieveAsync(dt.TagId);
+                if (tag != null)
                 {
-                    tags.Add(await _tagRepository.RetrieveAsync(item));
-                }               
+                    tagNames.Add(tag.Name);
+                }
+            }
+
+            var response = new GetDocumentResponse
+            {
+                Title = document.Title,
+                AccessLevel = document.AccessLevel,
+                Tags = tagNames,
+                CreatorFirstName = creator?.FirstName,
+                CreatorLastName = creator?.LastName,
+                CategoryName = category?.Name,
+                Version = version?.Version,
+                FilePath = version?.FilePath,
+                CreateDate = (DateTime)(version?.CreateDate)
+
+            };
+            return response;
+        }
+
+        public async Task<UpdateDocumentStateResponse> UpdateDocumentAsync(UpdateDocumentStateRequest request)
+        {
+            try
+            {
+                var document = await _documentRepository.RetrieveAsync(request.DocumentId);
+
+                if (document == null)
+                {
+                    return new UpdateDocumentStateResponse
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Document not found."
+                    };
+                }
+
+                if (document.IsDeleted == request.IsDeletedNewStatus)
+                {
+                    return new UpdateDocumentStateResponse
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = "Document is already in the requested state."
+                    };
+                }
+
+                document.IsDeleted = request.IsDeletedNewStatus;
+            }
+            catch (Exception ex)
+            {
+                return new UpdateDocumentStateResponse
+                {
+                    IsSuccess = false,
+                    ErrorMessage = $"An error occurred while retrieving the document: {ex.Message}"
+                };
+            }
+
+            return new UpdateDocumentStateResponse
+            {
+                IsSuccess = true
+            };
+        }
+        private async Task<DocumentInfo> MapToDocumentInfoAsync(Models.Document document)
+        {
+            var creator = await _userRepository.RetrieveAsync(document.CreatorId);
+            var category = await _categoryRepository.RetrieveAsync(document.CategoryId);
+            var documentTags = await _documentsTagsRepository
+                .RetrieveCollectionAsync(new DocumentTagFilter { DocumentId = document.DocumentId })
+                .ToListAsync();
+
+            var tags = new List<string>();
+            foreach (var dt in documentTags)
+            {
+                var tag = await _tagRepository.RetrieveAsync(dt.TagId);
+                if (tag != null)
+                    tags.Add(tag.Name);
             }
 
             return new DocumentInfo
             {
                 DocumentId = document.DocumentId,
                 Title = document.Title,
-                AccessLevel = (AccessLevel)document.AccessLevel,
+                AccessLevel = document.AccessLevel,
                 IsDeleted = document.IsDeleted,
                 CreatorId = document.CreatorId,
-                CreatorFirstName = creator.FirstName,
-                CreatorLastName = creator.LastName,
-                CategoryName = category.Name,
-                Tags = tags.Select(t => t.Name).ToList(),
+                CreatorFirstName = creator?.FirstName,
+                CreatorLastName = creator?.LastName,
+                CategoryId = document.CategoryId,
+                CategoryName = category?.Name,
+                Tags = tags
             };
-        }
-
-        public async Task<GetDocumentResponse> GetByIdAsync(int documentId)
-        {
-            var filter = new DocumentFilter
-            {
-                DocumentId = documentId,
-                IsDeleted = false
-            };
-
-            var document = await _documentRepository.RetrieveCollectionAsync(filter).FirstOrDefaultAsync();
-
-            var response = (GetDocumentResponse)await MapToDocumentFullInfo(document);
-            return response;
-        }
-
+        }    
     }
 }

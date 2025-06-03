@@ -1,6 +1,5 @@
 ﻿using DAIS.WikiSystem.Repository.Base;
 using DAIS.WikiSystem.Repository.Helpers;
-using DAIS.WikiSystem.Repository.Interfaces;
 using DAIS.WikiSystem.Repository.Interfaces.Category;
 using Microsoft.Data.SqlClient;
 
