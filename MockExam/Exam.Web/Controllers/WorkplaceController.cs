@@ -1,8 +1,6 @@
 ﻿using Exam.Services.DTOs.Reservation;
-using Exam.Services.Implementation;
 using Exam.Services.Interfaces;
 using Exam.Web.Attributes;
-using Exam.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exam.Web.Controllers
@@ -10,33 +8,28 @@ namespace Exam.Web.Controllers
     [Authorize]
     public class WorkplaceController : Controller
     {
-        private readonly IWorkplaceService _workplaceService;
         private readonly IReservationService _reservationService;
-        private readonly IFavoriteService _favoriteService;
 
-        private readonly IUserService _userService;
-
-        public WorkplaceController(ILogger<HomeController> logger, IUserService userService, IWorkplaceService workplaceService, IReservationService reservationService, IFavoriteService favoriteService)
+        public WorkplaceController(IReservationService reservationService)
         {
-            _userService = userService;
-            _workplaceService = workplaceService;
+
             _reservationService = reservationService;
-            _favoriteService = favoriteService;
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Reserve(int workplaceId)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
+            int userId = HttpContext.Session.GetInt32("UserId").Value;
+
+            if (!HttpContext.Session.GetInt32("UserId").HasValue)
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "Home") });
+                return RedirectToAction("Login", "Account");
             }
 
             var request = new CreateReservationRequest
             {
-                UserId = userId.Value,
+                UserId = userId,
                 WorkplaceId = workplaceId,
                 ReservationDate = DateTime.Today.AddDays(1)
             };
@@ -57,15 +50,16 @@ namespace Exam.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ReserveFuture(int workplaceId, DateTime reservationDate)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (!userId.HasValue)
+            int userId = HttpContext.Session.GetInt32("UserId").Value;
+
+            if (!HttpContext.Session.GetInt32("UserId").HasValue)
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "Home") });
+                return RedirectToAction("Login", "Account");
             }
 
             var request = new CreateReservationRequest
             {
-                UserId = userId.Value,
+                UserId = userId,
                 WorkplaceId = workplaceId,
                 ReservationDate = reservationDate
             };

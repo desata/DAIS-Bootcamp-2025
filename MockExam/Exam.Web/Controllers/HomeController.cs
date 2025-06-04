@@ -1,28 +1,19 @@
-using Exam.Models;
-using Exam.Services.Implementation;
 using Exam.Services.Interfaces;
 using Exam.Web.Attributes;
-using Exam.Web.Models;
 using Exam.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Exam.Web.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IWorkplaceService _workplaceService;
         private readonly IReservationService _reservationService;
         private readonly IFavoriteService _favoriteService;
 
-        private readonly IUserService _userService;
-
-        public HomeController(ILogger<HomeController> logger, IUserService userService, IWorkplaceService workplaceService, IReservationService reservationService, IFavoriteService favoriteService)
+        public HomeController(IWorkplaceService workplaceService, IReservationService reservationService, IFavoriteService favoriteService)
         {
-            _logger = logger;
-            _userService = userService;
             _workplaceService = workplaceService;
             _reservationService = reservationService;
             _favoriteService = favoriteService;

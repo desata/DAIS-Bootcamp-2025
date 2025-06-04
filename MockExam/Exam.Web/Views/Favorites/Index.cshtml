@@ -1,0 +1,56 @@
+﻿@model List<Exam.Web.Models.ViewModels.WorkplaceFavoriteViewModel>
+@{
+    ViewBag.Title = "Manage Favorites";
+    int favoriteCount = ViewBag.FavoriteCount;
+}
+
+<h2>Manage Favorite Workplaces</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Location</th>
+            <th>Monitor</th>
+            <th>Docking Station</th>
+            <th>Window</th>
+            <th>Printer</th>
+            <th>Favorite</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var workplace in Model)
+        {
+            <tr>
+                <td>@workplace.Location</td>
+                <td><input type="checkbox" disabled @(workplace.HasMonitor ? "checked" : "") /></td>
+                <td><input type="checkbox" disabled @(workplace.HasDockingStation ? "checked" : "") /></td>
+                <td><input type="checkbox" disabled @(workplace.HasWindow ? "checked" : "") /></td>
+                <td><input type="checkbox" disabled @(workplace.HasPrinter ? "checked" : "") /></td>
+                <td>
+                    @if (workplace.IsFavorite)
+                    {
+                        <form asp-action="RemoveFavorite" method="post">
+                            <input type="hidden" name="favoriteId" value="@workplace.FavoriteId" />
+                            <button class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    }
+                    else
+                    {
+                        if (favoriteCount < 3)
+                        {
+                            <form asp-action="AddFavorite" method="post">
+                                <input type="hidden" name="workplaceId" value="@workplace.WorkplaceId" />
+                                <input type="text" name="name" placeholder="Favorite name" required class="form-control form-control-sm mb-1" />
+                                <button class="btn btn-primary btn-sm">Add Favorite</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-sm" disabled>Max Reached</button>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -4,6 +4,7 @@
     {
         public DateTime ReservationDate { get; set; }
         public int WorkplaceId { get; set; }
+
         public int UserId { get; set; }
     }
 }

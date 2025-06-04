@@ -3,7 +3,7 @@ using Exam.Services.Interfaces;
 using Exam.Web.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Exam.Web.Models.ViewModels
+namespace Exam.Web.Controllers
 {
     [Authorize]
     public class ReservationController : Controller

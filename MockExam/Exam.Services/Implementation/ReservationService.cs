@@ -1,4 +1,5 @@
 ﻿using Exam.Models;
+using Exam.Repository.Implementation;
 using Exam.Repository.Interfaces;
 using Exam.Services.DTOs.Reservation;
 using Exam.Services.Interfaces;
@@ -9,10 +10,12 @@ namespace Exam.Services.Implementation
     {
 
         private readonly IReservationRepository _reservationRepository;
+        private readonly IWorkplaceRepository _workplaceRepository;
 
-        public ReservationService(IReservationRepository reservationRepository)
+        public ReservationService(IReservationRepository reservationRepository, IWorkplaceRepository workplaceRepository)
         {
             _reservationRepository = reservationRepository;
+            _workplaceRepository = workplaceRepository;
         }
 
         public async Task<CreateReservationResponse> CreateReservationAsync(CreateReservationRequest request)
@@ -84,20 +87,29 @@ namespace Exam.Services.Implementation
         public async Task<List<ReservationInfo>> GetAllByUserIdAsync(int userId)
         {
             var reservations = await _reservationRepository.RetrieveByUserIdAsync(userId);
+            var result = new List<ReservationInfo>();
 
-            return reservations.Select(r => new ReservationInfo
+            foreach (var r in reservations)
             {
-                ReservationId = r.ReservationId,
-                ReservationDate = r.ReservationDate,
-                WorkplaceId = r.WorkplaceId,
-                UserId = r.UserId
+                var workplace = await _workplaceRepository.RetrieveByIdAsync(r.WorkplaceId); 
 
-            }).ToList();
+                result.Add(new ReservationInfo
+                {
+                    ReservationId = r.ReservationId,
+                    ReservationDate = r.ReservationDate,
+                    WorkplaceId = r.WorkplaceId,
+                    UserId = r.UserId,
+                    Location = workplace.Location
+                });
+            }
+
+            return result;
         }
 
         public async Task<ReservationInfo> GetByIdAsync(int reservationId)
         {
             var reservation = await _reservationRepository.RetrieveByIdAsync(reservationId);
+            var workplace = await _workplaceRepository.RetrieveByIdAsync(reservation.WorkplaceId);
 
             if (reservation == null)
                 return null;
@@ -107,6 +119,7 @@ namespace Exam.Services.Implementation
                 ReservationId = reservation.ReservationId,
                 ReservationDate = reservation.ReservationDate,
                 WorkplaceId = reservation.WorkplaceId,
+                Location = workplace.Location,
                 UserId = reservation.UserId
             };
         }

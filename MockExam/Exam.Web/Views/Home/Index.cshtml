@@ -7,7 +7,7 @@
 <div class="container mt-4">
     <div class="row">
         <!-- Center: Available Workplaces -->
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h2>Free Workplaces (@Model.AvailableWorkplaces.TotalCount)</h2>
 
             <table class="table table-bordered table-striped">
@@ -54,26 +54,27 @@
                                 {
                                     <form asp-action="Reserve" asp-controller="Workplace" method="post">
                                         <input type="hidden" name="workplaceId" value="@workplace.WorkplaceId" />
-                                        <button type="submit" class="btn btn-primary btn-sm">Fast Reserve</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Reserve</button>
                                     </form>
                                 }
                                 else
                                 {
                                     <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
                                 }
-
+                            </td>
                             <td>
-                                    @if (workplace.IsAvailable)
-                                    {
-                                    <!-- Reserve for future date button -->
-                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reserveModal-@workplace.WorkplaceId">
-                                        Reserve for Date
-                                    </button>
-                                    }
-                                    else
-                                    {
+                                @if (workplace.IsAvailable)
+                                {
+                                    <form asp-action="ReserveFuture" asp-controller="Workplace" method="post" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="workplaceId" value="@workplace.WorkplaceId" />
+                                        <input type="date" name="reservationDate" class="form-control form-control-sm" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(14).ToString("yyyy-MM-dd")" required />
+                                        <button type="submit" class="btn btn-success btn-sm">Reserve for Date</button>
+                                    </form>
+                                }
+                                else
+                                {
                                     <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
-                                    }
+                                }
                             </td>
                         </tr>
                     }
@@ -87,13 +88,17 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="reserveModalLabel-@workplace.WorkplaceId">Reserve for Date</h5>
+                                    <h5 class="modal-title" id="reserveModalLabel-@workplace.WorkplaceId">Reserve for Date</h5>
+
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" name="workplaceId" value="@workplace.WorkplaceId" />
                                     <div class="mb-3">
                                         <label for="reservationDate-@workplace.WorkplaceId" class="form-label">Select Date</label>
-                                        <input type="date" class="form-control" id="reservationDate-@workplace.WorkplaceId" name="reservationDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(14).ToString("yyyy-MM-dd")" required />
+                                        <input type="date" class="form-control" id="reservationDate-@workplace.WorkplaceId" name="reservationDate" 
+                                        min="@DateTime.Today.ToString("yyyy-MM-dd")" 
+                                        max="@DateTime.Today.AddDays(14).ToString("yyyy-MM-dd")" required />
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -116,7 +121,8 @@
                     <tr>
                         <th>Reservation Date</th>
                         <th>Workplace ID</th>
-                        <th></th>
+                        <th>Location</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -125,6 +131,7 @@
                         <tr>
                             <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
                             <td>@res.WorkplaceId</td>
+                            <td>@res.Location</td>
                             <td>
                                 @if (res.ReservationDate > DateTime.Today)
                                 {
