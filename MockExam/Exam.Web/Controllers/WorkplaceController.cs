@@ -1,4 +1,6 @@
 ﻿using Exam.Services.DTOs.Reservation;
+using Exam.Services.DTOs.Workplace;
+using Exam.Services.Implementation;
 using Exam.Services.Interfaces;
 using Exam.Web.Attributes;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +11,13 @@ namespace Exam.Web.Controllers
     public class WorkplaceController : Controller
     {
         private readonly IReservationService _reservationService;
+        private readonly IWorkplaceService _workplaceService;
 
-        public WorkplaceController(IReservationService reservationService)
+        public WorkplaceController(IReservationService reservationService, IWorkplaceService workplaceService)
         {
 
             _reservationService = reservationService;
+            _workplaceService = workplaceService;
         }
 
 
@@ -34,14 +38,29 @@ namespace Exam.Web.Controllers
                 ReservationDate = DateTime.Today.AddDays(1)
             };
 
-            try
+            var result = await _reservationService.CreateReservationAsync(request);
+
+            if (result.Success)
             {
-                var result = await _reservationService.CreateReservationAsync(request);
-                TempData["SuccessMessage"] = "Reservation created successfully.";
+                // Mark workplace as unavailable after successful reservation
+                var updateResponse = await _workplaceService.UpdateWorkPlaceAvailability(new UpdateWorkplaceAvailabilityRequest
+                {
+                    WorkplaceId = workplaceId,
+                    IsAvailable = false
+                });
+
+                if (!updateResponse.Success)
+                {
+                    TempData["Error"] = updateResponse.ErrorMessage;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Reservation created successfully.";
+                }
             }
-            catch (Exception ex)
+            else
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["Error"] = result.ErrorMessage;
             }
 
             return RedirectToAction("Index", "Home");
@@ -64,11 +83,29 @@ namespace Exam.Web.Controllers
                 ReservationDate = reservationDate
             };
 
-            var response = await _reservationService.CreateReservationAsync(request);
+            var result = await _reservationService.CreateReservationAsync(request);
 
-            if (!response.Success)
+            if (result.Success)
             {
-                TempData["Error"] = response.ErrorMessage;
+                // Mark workplace as unavailable after successful reservation
+                var updateResponse = await _workplaceService.UpdateWorkPlaceAvailability(new UpdateWorkplaceAvailabilityRequest
+                {
+                    WorkplaceId = workplaceId,
+                    IsAvailable = false
+                });
+
+                if (!updateResponse.Success)
+                {
+                    TempData["Error"] = updateResponse.ErrorMessage;
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Reservation created successfully.";
+                }
+            }
+            else
+            {
+                TempData["Error"] = result.ErrorMessage;
             }
 
             return RedirectToAction("Index", "Home");

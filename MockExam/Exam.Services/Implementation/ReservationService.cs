@@ -77,6 +77,8 @@ namespace Exam.Services.Implementation
                 return response;
             }
 
+            var workplace = await _workplaceRepository.RetrieveByIdAsync(reservation.WorkplaceId);
+
             var success = await _reservationRepository.DeleteAsync(request.ReservationId);
 
             response.Success = success;

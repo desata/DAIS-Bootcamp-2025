@@ -33,7 +33,7 @@ namespace Exam.Services.Implementation
         public async Task<List<WorkplaceInfo>> GetAvailableWorkplacesAsync()
         {
             var workplaces = await _workplaceRepository.RetrieveCollectionAsync();
-            return workplaces.Where(w => w.IsAvailable = true).Select(workplace => new WorkplaceInfo
+            return workplaces.Where(w => w.IsAvailable).Select(workplace => new WorkplaceInfo
             {
                 WorkplaceId = workplace.WorkplaceId,
                 HasMonitor = workplace.HasMonitor,
