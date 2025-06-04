@@ -5,11 +5,6 @@
         public int TotalCount { get; set; }
         public List<WorkplaceInfo> Workplaces { get; set; }
 
-        //Filtering options
-        public bool FilterHasMonitor { get; set; }
-        public bool FilterHasDockingStation { get; set; }
-        public bool FilterHasWindow { get; set; }
-        public bool FilterHasPrinter { get; set; }
     }
     public class WorkplaceInfo
     {
@@ -20,6 +15,9 @@
         public bool HasPrinter { get; set; }
         public bool IsAvailable { get; set; }
         public string Location { get; set; }
+
+        public bool IsFavorite { get; set; }
+        public int? FavoriteId { get; set; }
     }
 }
 

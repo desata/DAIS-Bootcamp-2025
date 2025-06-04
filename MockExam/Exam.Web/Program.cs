@@ -20,6 +20,7 @@ namespace Exam.Web
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IWorkplaceService, WorkplaceService>();
             builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
 
             // Register repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();

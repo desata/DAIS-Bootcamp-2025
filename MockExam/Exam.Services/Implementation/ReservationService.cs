@@ -97,15 +97,17 @@ namespace Exam.Services.Implementation
 
         public async Task<ReservationInfo> GetByIdAsync(int reservationId)
         {
-            var reservations = await _reservationRepository.RetrieveByIdAsync(reservationId);
+            var reservation = await _reservationRepository.RetrieveByIdAsync(reservationId);
+
+            if (reservation == null)
+                return null;
 
             return new ReservationInfo
             {
-                ReservationId = reservations.ReservationId,
-                ReservationDate = reservations.ReservationDate,
-                WorkplaceId = reservations.WorkplaceId,
-                UserId = reservations.UserId
-
+                ReservationId = reservation.ReservationId,
+                ReservationDate = reservation.ReservationDate,
+                WorkplaceId = reservation.WorkplaceId,
+                UserId = reservation.UserId
             };
         }
     }

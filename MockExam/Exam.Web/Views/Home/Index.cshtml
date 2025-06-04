@@ -1,4 +1,151 @@
+﻿@model Exam.Web.Models.ViewModels.HomeViewModel
+
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
-Welcome
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Center: Available Workplaces -->
+        <div class="col-md-8">
+            <h2>Free Workplaces (@Model.AvailableWorkplaces.TotalCount)</h2>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Location</th>
+                        <th>Monitor</th>
+                        <th>Docking Station</th>
+                        <th>Window</th>
+                        <th>Printer</th>
+                        <th>Available</th>
+                        <th></th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var workplace in Model.AvailableWorkplaces.Workplaces)
+                    {
+                        <tr>
+                            <td>
+                                @if (workplace.IsFavorite)
+                                {
+                                    <span title="fav" style="color: gold;">★</span>
+                                }
+                            </td>
+                            <td>@workplace.Location</td>
+                            <td><input type="checkbox" disabled @(workplace.HasMonitor ? "checked" : "") /></td>
+                            <td><input type="checkbox" disabled @(workplace.HasDockingStation ? "checked" : "") /></td>
+                            <td><input type="checkbox" disabled @(workplace.HasWindow ? "checked" : "") /></td>
+                            <td><input type="checkbox" disabled @(workplace.HasPrinter ? "checked" : "") /></td>
+                            <td>
+                                @if (workplace.IsAvailable)
+                                {
+                                    <span class="text-success">Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">No</span>
+                                }
+                            </td>
+                            <td>
+                                @if (workplace.IsAvailable)
+                                {
+                                    <form asp-action="Reserve" asp-controller="Workplace" method="post">
+                                        <input type="hidden" name="workplaceId" value="@workplace.WorkplaceId" />
+                                        <button type="submit" class="btn btn-primary btn-sm">Fast Reserve</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
+                                }
+
+                            <td>
+                                    @if (workplace.IsAvailable)
+                                    {
+                                    <!-- Reserve for future date button -->
+                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#reserveModal-@workplace.WorkplaceId">
+                                        Reserve for Date
+                                    </button>
+                                    }
+                                    else
+                                    {
+                                    <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
+                                    }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @foreach (var workplace in Model.AvailableWorkplaces.Workplaces)
+            {
+                <div class="modal fade" id="reserveModal-@workplace.WorkplaceId" tabindex="-1" aria-labelledby="reserveModalLabel-@workplace.WorkplaceId" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <form asp-action="ReserveForDate" asp-controller="Workplace" method="post">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="reserveModalLabel-@workplace.WorkplaceId">Reserve for Date</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="workplaceId" value="@workplace.WorkplaceId" />
+                                    <div class="mb-3">
+                                        <label for="reservationDate-@workplace.WorkplaceId" class="form-label">Select Date</label>
+                                        <input type="date" class="form-control" id="reservationDate-@workplace.WorkplaceId" name="reservationDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(14).ToString("yyyy-MM-dd")" required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Reserve</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right: User Reservations -->
+        <h3>Your Reservations</h3>
+
+        @if (Model.UserReservations.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Reservation Date</th>
+                        <th>Workplace ID</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var res in Model.UserReservations)
+                    {
+                        <tr>
+                            <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
+                            <td>@res.WorkplaceId</td>
+                            <td>
+                                @if (res.ReservationDate > DateTime.Today)
+                                {
+                                    <form asp-action="DeleteReservation" asp-controller="Reservation" method="post" onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                                        <input type="hidden" name="reservationId" value="@res.ReservationId" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Past reservation</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">You have no active reservations.</p>
+        }
+    </div>
+</div>

@@ -1,3 +1,5 @@
+using Exam.Models;
+using Exam.Services.Implementation;
 using Exam.Services.Interfaces;
 using Exam.Web.Attributes;
 using Exam.Web.Models;
@@ -12,72 +14,60 @@ namespace Exam.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IWorkplaceService _workplaceService;
+        private readonly IReservationService _reservationService;
+        private readonly IFavoriteService _favoriteService;
 
         private readonly IUserService _userService;
 
-        public HomeController(ILogger<HomeController> logger, IUserService userService, IWorkplaceService workplaceService)
+        public HomeController(ILogger<HomeController> logger, IUserService userService, IWorkplaceService workplaceService, IReservationService reservationService, IFavoriteService favoriteService)
         {
             _logger = logger;
             _userService = userService;
             _workplaceService = workplaceService;
+            _reservationService = reservationService;
+            _favoriteService = favoriteService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
+            int userId = HttpContext.Session.GetInt32("UserId").Value;
 
-            if (!userId.HasValue)
+            if (!HttpContext.Session.GetInt32("UserId").HasValue)
             {
-                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Index", "Home") });
+                return RedirectToAction("Login", "Account");
             }
 
-            var response = await _userService.GetAllUsersAsync();
+            var workplaces = await _workplaceService.GetAvailableWorkplacesAsync();
+            var favorites = await _favoriteService.GetAllByUserIdAsync(userId);
 
-            var viewModel = new UserListViewModel
+            var workplacesVModel = workplaces.Select(wp => new WorkplaceInfo
             {
-                Users = response.Select(u => new UserViewModel
+                WorkplaceId = wp.WorkplaceId,
+                HasMonitor = wp.HasMonitor,
+                HasDockingStation = wp.HasDockingStation,
+                HasWindow = wp.HasWindow,
+                HasPrinter = wp.HasPrinter,
+                IsAvailable = wp.IsAvailable,
+                Location = wp.Location,
+                IsFavorite = favorites.Any(f => f.WorkplaceId == wp.WorkplaceId)
+            }).OrderByDescending(w => w.IsFavorite)
+              .ThenBy(w => w.FavoriteId ?? int.MaxValue)
+              .ToList();
+
+            var reservations = await _reservationService.GetAllByUserIdAsync(userId);
+
+            var viewModel = new HomeViewModel
+            {
+                AvailableWorkplaces = new WorkplaceListViewModel
                 {
-                    UserId = u.UserId,
-                    Name = u.Name
-                }).ToList(),
-
-
+                    TotalCount = workplacesVModel.Count,
+                    Workplaces = workplacesVModel
+                },
+                UserReservations = reservations
             };
 
             return View(viewModel);
-        }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public async Task<IActionResult> Free(bool filterHasMonitor, bool filterHasDockingStation, bool filterHasWindow, bool filterHasPrinter)
-        {
-            var dtoList = await _workplaceService.GetAvailableWorkplacesAsync();
-
-            var viewModel = new WorkplaceListViewModel
-            {
-                Workplaces = dtoList.Select(dto => new WorkplaceInfo
-                {
-                    WorkplaceId = dto.WorkplaceId,
-                    HasMonitor = dto.HasMonitor,
-                    HasDockingStation = dto.HasDockingStation,
-                    HasWindow = dto.HasWindow,
-                    HasPrinter = dto.HasPrinter,
-                    IsAvailable = dto.IsAvailable,
-                    Location = dto.Location
-                }).ToList(),
-
-                TotalCount = dtoList.Count,
-
-                FilterHasMonitor = filterHasMonitor,
-                FilterHasDockingStation = filterHasDockingStation,
-                FilterHasWindow = filterHasWindow,
-                FilterHasPrinter = filterHasPrinter
-            };
-            return View(viewModel);
         }
     }
 }

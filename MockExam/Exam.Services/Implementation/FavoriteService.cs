@@ -131,5 +131,18 @@ namespace Exam.Services.Implementation
             };
 
         }
+
+        public async Task<FavoriteInfo> GetByUserIdAsync(int userId)
+        {
+            var favorite = await _favoriteRepository.RetrieveByIdAsync(userId);
+
+            return new FavoriteInfo
+            {
+                FavoriteId = favorite.FavoriteId,
+                Name = favorite.Name,
+                WorkplaceId = favorite.WorkplaceId,
+                UserId = favorite.UserId
+            };
+        }
     }
 }
