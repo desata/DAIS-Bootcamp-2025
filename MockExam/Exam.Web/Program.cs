@@ -25,6 +25,7 @@ namespace Exam.Web
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IWorkplaceRepository, WorkplaceRepository>();
             builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 
             // Initialize connection factory

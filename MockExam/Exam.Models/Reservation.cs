@@ -7,6 +7,7 @@ namespace Exam.Models
         public int ReservationId { get; set; }
 
         [Required(ErrorMessage = "Reservation date is required")]
+        [DataType(DataType.DateTime, ErrorMessage = "Invalid date format")]
         public DateTime ReservationDate { get; set; }
 
         [Required(ErrorMessage = "Workplace is required")]
