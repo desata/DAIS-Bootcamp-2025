@@ -1,7 +1,6 @@
 ﻿using Exam.Models;
 using Exam.Repository.Interfaces;
 using Microsoft.Data.SqlClient;
-using System.Net.NetworkInformation;
 
 namespace Exam.Repository.Implementation
 {
@@ -52,7 +51,7 @@ namespace Exam.Repository.Implementation
         }
 
         public async Task<Favorite?> RetrieveByIdAsync(int favoriteId)
-        {       
+        {
             using var connection = await ConnectionFactory.CreateConnectionAsync();
             using var command = new SqlCommand("SELECT * FROM Favorites WHERE FavoriteId = @favoriteId", connection);
             command.Parameters.AddWithValue("@FavoriteId", favoriteId);

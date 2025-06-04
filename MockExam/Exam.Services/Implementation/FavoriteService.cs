@@ -1,5 +1,4 @@
 ﻿using Exam.Models;
-using Exam.Repository.Implementation;
 using Exam.Repository.Interfaces;
 using Exam.Services.DTOs.Favorite;
 using Exam.Services.Interfaces;
@@ -64,32 +63,33 @@ namespace Exam.Services.Implementation
                     ErrorMessage = $"Unexpected error: {ex.Message}"
                 };
             }
-        }  
+        }
 
 
         public async Task<DeleteFavoriteResponse> DeleteFavoriteAsync(DeleteFavoriteRequest request)
         {
-            try { 
-            var favoriteId = await _favoriteRepository.RetrieveByIdAsync(request.FavoriteId);
-
-            if (favoriteId == null)
+            try
             {
-                return new DeleteFavoriteResponse
-                {
-                    Success = false,
-                    ErrorMessage = "Favorite not found."
-                };
-            }
+                var favoriteId = await _favoriteRepository.RetrieveByIdAsync(request.FavoriteId);
 
-            var isDeleted = await _favoriteRepository.DeleteAsync(request.FavoriteId);
-            if (!isDeleted)
-            {
-                return new DeleteFavoriteResponse
+                if (favoriteId == null)
                 {
-                    Success = false,
-                    ErrorMessage = "Failed to delete favorite."
-                };
-            }
+                    return new DeleteFavoriteResponse
+                    {
+                        Success = false,
+                        ErrorMessage = "Favorite not found."
+                    };
+                }
+
+                var isDeleted = await _favoriteRepository.DeleteAsync(request.FavoriteId);
+                if (!isDeleted)
+                {
+                    return new DeleteFavoriteResponse
+                    {
+                        Success = false,
+                        ErrorMessage = "Failed to delete favorite."
+                    };
+                }
                 return new DeleteFavoriteResponse
                 {
                     Success = true
@@ -118,18 +118,18 @@ namespace Exam.Services.Implementation
             }).ToList();
         }
 
-        public async Task<FavoriteInfo> GetByIdAsync(int favorite)
+        public async Task<FavoriteInfo> GetByIdAsync(int favoriteId)
         {
-            var favoriteId = await _favoriteRepository.RetrieveByIdAsync(favorite);
+            var favorite = await _favoriteRepository.RetrieveByIdAsync(favoriteId);
 
             return new FavoriteInfo
             {
-                FavoriteId = favoriteId.FavoriteId,
-                Name = favoriteId.Name,
-                WorkplaceId = favoriteId.WorkplaceId,
-                UserId = favoriteId.UserId
-            };           
-               
+                FavoriteId = favorite.FavoriteId,
+                Name = favorite.Name,
+                WorkplaceId = favorite.WorkplaceId,
+                UserId = favorite.UserId
+            };
+
         }
     }
 }

@@ -1,4 +1,3 @@
-using Exam.Models;
 using Exam.Repository.Interfaces;
 using Exam.Services.DTOs.User;
 using Exam.Services.Interfaces;
@@ -24,7 +23,7 @@ namespace Exam.Services.Implementation
                 UserId = user.UserId,
                 Name = user.Name,
                 Email = user.Email
-            }).ToList();           
+            }).ToList();
         }
 
         public async Task<UserInfo> GetByIdAsync(int userId)
@@ -36,7 +35,7 @@ namespace Exam.Services.Implementation
                 Name = user.Name,
                 Email = user.Email
             };
-        
+
         }
 
         public async Task<UserInfo?> GetByUsernameAsync(string username)
@@ -46,7 +45,7 @@ namespace Exam.Services.Implementation
             {
                 UserId = user.UserId,
                 Name = user.Name,
-                 Email = user.Email
+                Email = user.Email
             };
         }
     }

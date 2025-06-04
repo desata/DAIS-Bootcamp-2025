@@ -1,4 +1,3 @@
-using Exam.Services.Implementation;
 using Exam.Services.Interfaces;
 using Exam.Web.Attributes;
 using Exam.Web.Models;
@@ -35,12 +34,12 @@ namespace Exam.Web.Controllers
             var response = await _userService.GetAllUsersAsync();
 
             var viewModel = new UserListViewModel
-            { 
+            {
                 Users = response.Select(u => new UserViewModel
                 {
                     UserId = u.UserId,
                     Name = u.Name
-                }).ToList(),     
+                }).ToList(),
 
 
             };

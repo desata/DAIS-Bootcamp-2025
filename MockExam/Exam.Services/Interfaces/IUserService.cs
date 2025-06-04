@@ -1,4 +1,3 @@
-using Exam.Models;
 using Exam.Services.DTOs.User;
 
 namespace Exam.Services.Interfaces

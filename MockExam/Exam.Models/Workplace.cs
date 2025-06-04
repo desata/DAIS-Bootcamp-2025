@@ -21,7 +21,7 @@ namespace Exam.Models
 
         [Required(ErrorMessage = "Field is required")]
         [StringLength(100, MinimumLength = 3, ErrorMessage = "Location must be between 3 and 100 characters")]
-        public string Location { get; set; } 
+        public string Location { get; set; }
 
     }
 }

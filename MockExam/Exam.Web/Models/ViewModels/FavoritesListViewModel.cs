@@ -6,7 +6,7 @@
         public List<FavoritesViewModel> Favorites { get; set; }
     }
     public class FavoritesViewModel
-    { 
+    {
         //TODO
     }
 }

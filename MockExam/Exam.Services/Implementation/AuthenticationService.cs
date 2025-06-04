@@ -2,12 +2,6 @@ using Exam.Repository.Interfaces;
 using Exam.Services.DTOs.Authentication;
 using Exam.Services.Helpers;
 using Exam.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Exam.Services.Implementation
 {
@@ -34,7 +28,7 @@ namespace Exam.Services.Implementation
             var hashedPassword = SecurityHelper.HashPassword(request.Password);
 
             var user = await _userRepository.RetrieveByUsernameAsync(request.Username);
-          
+
             if (user is null || user.Password != hashedPassword)
             {
                 return new LoginResponse
