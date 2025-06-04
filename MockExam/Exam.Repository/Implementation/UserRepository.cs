@@ -21,14 +21,7 @@ namespace Exam.Repository.Implementation
 
             while (await reader.ReadAsync())
             {
-                users.Add(new User
-                {
-                    UserId = Convert.ToInt32(reader["UserId"]),
-                    Name = Convert.ToString(reader["Name"]),
-                    Email = Convert.ToString(reader["Email"]),
-                    Username = Convert.ToString(reader["Username"]),
-                    Password = Convert.ToString(reader["Password"])
-                });
+                users.Add(MapUser(reader));
             }
 
             return users;
@@ -43,17 +36,11 @@ namespace Exam.Repository.Implementation
             using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                return new User
-                {
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    Email = reader.GetString(reader.GetOrdinal("Email")),
-                    Username = reader.GetString(reader.GetOrdinal("Username")),
-                    Password = reader.GetString(reader.GetOrdinal("Password"))
-                };
+                return MapUser(reader);
             }
 
             return null;
+
         }
 
         public async Task<User?> RetrieveByUsernameAsync(string username)
@@ -65,14 +52,7 @@ namespace Exam.Repository.Implementation
             using var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                return new User
-                {
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    Email = reader.GetString(reader.GetOrdinal("Email")),
-                    Username = reader.GetString(reader.GetOrdinal("Username")),
-                    Password = reader.GetString(reader.GetOrdinal("Password"))
-                };
+                return MapUser(reader);
             }
 
             return null;
@@ -86,6 +66,19 @@ namespace Exam.Repository.Implementation
         public Task<bool> DeleteAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+
+        private static User MapUser(SqlDataReader reader)
+        {
+            return new User
+            {
+                UserId = Convert.ToInt32(reader["UserId"]),
+                Name = Convert.ToString(reader["Name"]),
+                Email = Convert.ToString(reader["Email"]),
+                Username = Convert.ToString(reader["Username"]),
+                Password = Convert.ToString(reader["Password"])
+            };
         }
     }
 }

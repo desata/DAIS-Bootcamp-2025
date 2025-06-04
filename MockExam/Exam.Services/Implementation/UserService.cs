@@ -24,9 +24,19 @@ namespace Exam.Services.Implementation
                 UserId = user.UserId,
                 Name = user.Name,
                 Email = user.Email
-            }).ToList();
+            }).ToList();           
+        }
 
-           
+        public async Task<UserInfo> GetByIdAsync(int userId)
+        {
+            var user = await _userRepository.RetrieveByIdAsync(userId);
+            return new UserInfo
+            {
+                UserId = user.UserId,
+                Name = user.Name,
+                Email = user.Email
+            };
+        
         }
 
         public async Task<UserInfo?> GetByUsernameAsync(string username)
@@ -38,7 +48,6 @@ namespace Exam.Services.Implementation
                 Name = user.Name,
                  Email = user.Email
             };
-
         }
     }
 }

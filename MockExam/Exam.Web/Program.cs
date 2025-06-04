@@ -18,9 +18,11 @@ namespace Exam.Web
             // Register services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IWorkplaceService, WorkplaceService>();
 
             // Register repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IWorkplaceRepository, WorkplaceRepository>();
 
 
             // Initialize connection factory
