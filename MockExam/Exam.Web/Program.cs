@@ -19,10 +19,12 @@ namespace Exam.Web
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IWorkplaceService, WorkplaceService>();
+            builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 
             // Register repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IWorkplaceRepository, WorkplaceRepository>();
+            builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
 
             // Initialize connection factory
